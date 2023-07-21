@@ -1,8 +1,16 @@
 import React from 'react'
-
+import UserRegister from '../../components/Users/UserRegister/UserRegister'
+import "../Users/Users.css"
 const Users = () => {
     return (
-        <div>Users</div>
+        <>
+            <section>
+                <div className='users-container'>
+                    <UserRegister />
+
+                </div>
+            </section>
+        </>
     )
 }
 
