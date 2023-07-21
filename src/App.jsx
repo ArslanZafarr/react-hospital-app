@@ -1,9 +1,18 @@
 import './App.css'
+import Login from './components/login'
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Home from './pages/Home'
+import Header from './components/Header/Header'
 
 function App() {
   return (
     <>
-      <h1>React APp</h1>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path='/' element={<Home />} />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
