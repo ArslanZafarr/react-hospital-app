@@ -1,9 +1,7 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Home from './pages/Home'
-import Header from './components/Header/Header'
-import Users from './pages/Users/Users'
 import Login from './pages/Login/Login'
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard'
 
 function App() {
   return (
@@ -11,10 +9,8 @@ function App() {
       <BrowserRouter>
         {/* <Header /> */}
         <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/users' element={<Users />} />
-          <Route path='/login' element={<Login />} />
-
+          <Route path='/' element={<Login />} />
+          <Route path='/admin-dashboard' element={< AdminDashboard />} />
         </Routes>
       </BrowserRouter>
     </>

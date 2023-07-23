@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import "../Login/Login.css"
+import { useNavigate } from 'react-router';
 
 const Logins = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+
+    const navigate = useNavigate()
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -14,7 +17,6 @@ const Logins = () => {
             email: email,
             password: password,
         };
-
         try {
             const response = await axios.post('https://leadsapi.backendz.co/public/api/login', loginData);
 
@@ -23,6 +25,10 @@ const Logins = () => {
                 localStorage.setItem('apiToken', api_token);
 
                 setMessage('Login successful as admin');
+                if (api_token) {
+                    navigate("/admin-dashboard")
+
+                }
             } else {
                 setMessage('Invalid email or password. Please try again.');
             }
@@ -30,6 +36,7 @@ const Logins = () => {
             setMessage('An error occurred during login. Please try again later.');
         }
     };
+
 
     return (
         <section className='login-section'>
