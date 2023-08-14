@@ -1,9 +1,17 @@
-// Login.js
-import React, { useState } from 'react';
+import  { useState } from 'react';
+import { useUserLoginMutation } from '../features/auth/loginApi';
+import { useDispatch } from 'react-redux';
+import { setToken } from '../features/auth/LoginSlice';
 
 const Login = () => {
+
+    const dispatch = useDispatch()
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+
+    const [userLogin , {isLoading}] = useUserLoginMutation()
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -14,24 +22,17 @@ const Login = () => {
         };
 
         try {
-            const response = await fetch('https://leadsapi.backendz.co/public/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(loginData),
-            });
+            const response = await userLogin(loginData)
 
-            if (response.ok) {
-                // Login success
-                // You may handle the response here, e.g., storing the token in state or local storage
-                console.log('Login successful!');
+            if (response.success === true) {
+                console.log(response)
+               dispatch(setToken(response.result.api_token))
             } else {
                 // Login failed
                 console.error('Login failed.');
             }
         } catch (error) {
-            console.error('Error occurred during login:', error);
+           console.log(error)
         }
     };
 
@@ -55,7 +56,9 @@ const Login = () => {
                     required
                 />
             </div>
-            <button type="submit">Login</button>
+            <button 
+            disabled={isLoading}
+            type="submit">Login</button>
         </form>
     );
 };

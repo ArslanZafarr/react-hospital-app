@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import "../Login/Login.css"
 import { useNavigate } from 'react-router';
+import { useUserLoginMutation } from '../../features/auth/loginApi';
+import { useDispatch } from 'react-redux';
+import { setToken } from '../../features/auth/LoginSlice';
 
 const Logins = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
-
+    const dispatch = useDispatch()
     const navigate = useNavigate()
 
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+  
+    const [userLogin, { isLoading }] = useUserLoginMutation()
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -17,23 +20,17 @@ const Logins = () => {
             email: email,
             password: password,
         };
+
         try {
-            const response = await axios.post('https://leadsapi.backendz.co/public/api/login', loginData);
-
-            if (response.data.success) {
-                const { api_token } = response.data.result;
-                localStorage.setItem('apiToken', api_token);
-
-                setMessage('Login successful as admin');
-                if (api_token) {
-                    navigate("/admin-dashboard")
-
-                }
-            } else {
-                setMessage('Invalid email or password. Please try again.');
+            const response = await userLogin(loginData).unwrap()
+            localStorage.setItem("token", JSON.stringify(response.result.api_token));
+            dispatch(setToken(response.result.api_token))
+            if (response.success === true) {
+                navigate('/admin-dashboard')
             }
+
         } catch (error) {
-            setMessage('An error occurred during login. Please try again later.');
+            console.log(error)
         }
     };
 
@@ -61,8 +58,9 @@ const Logins = () => {
                         required
                     />
                 </div>
-                <button className='login-button' type="submit">Login</button>
-                <p>{message}</p>
+                <button className='login-button'
+                    disabled={isLoading}
+                    type="submit">Login</button>
             </form>
         </section>
     );

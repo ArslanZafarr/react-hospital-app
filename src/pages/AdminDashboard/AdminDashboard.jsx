@@ -1,32 +1,42 @@
-import React from 'react'
-import axios from 'axios';
-import { useNavigate } from 'react-router';
+import { useDispatch } from "react-redux"
+import { useUserLogoutMutation } from "../../features/auth/LogoutApi"
+import { useGetProfileQuery } from "../../features/auth/getProfileApi"
+import { setLogout } from "../../features/auth/LoginSlice"
+import { useNavigate } from "react-router"
 
 const AdminDashboard = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const [userLogout ]=  useUserLogoutMutation()
+    const { data } = useGetProfileQuery()
+
+
+    const name = data?.result?.me?.first_name
+    const email = data?.result?.me?.email
+  
 
     const logout = async () => {
         try {
-            const apiToken = localStorage.getItem('apiToken');
-
-            const headers = {
-                Authorization: `Bearer ${apiToken}`,
-            };
-            await axios.post('https://leadsapi.backendz.co/public/api/logout', null, { headers });
-
-            localStorage.removeItem('apiToken');
-
-            navigate('/');
-        } catch (error) {
-            console.error(error);
-        }
-    };
+            await userLogout().unwrap();
+            dispatch(setLogout());
+            localStorage.clear();
+             navigate('/')
+        
+          } catch (error) {
+            console.error('Logout error:', error);
+          }
+    }
 
     return (
-        <div>AdminDashboard
+        <section>
+            <h1>{name}</h1>
+            <h2>{email}</h2>
 
-            <button onClick={logout}>Logout</button>
-        </div>
+            <button onClick={logout} >Logout</button>
+        </section>
+
+
 
     )
 }
